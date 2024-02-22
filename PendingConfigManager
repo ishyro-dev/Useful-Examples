@@ -1,0 +1,47 @@
+package me.ishyro.core.block.storage;
+
+import org.bukkit.configuration.file.FileConfiguration;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PendingConfigManager {
+    FileConfiguration config;
+    public PendingConfigManager(){
+        config = PendingConfig.get();
+    }
+
+    public void addPlayerToYML(String playerName, long value) {
+        if(!config.isConfigurationSection("players"))
+            config.createSection("players");
+        if (config.contains("players." + playerName)) {
+
+            config.set("players." + playerName, config.getLong("players." + playerName) + value);
+        } else {
+
+            config.set("players." + playerName, value);
+        }
+        PendingConfig.save();
+    }
+    public void removePlayerFromYML(String playerName) {
+        if(!config.isConfigurationSection("players"))
+            config.createSection("players");
+        // Check if the player exists in the YML list
+        if (config.contains("players." +  playerName)) {
+            config.set("players." +  playerName, null);
+        }
+        PendingConfig.save();
+    }
+    public List<String> getPlayerNames(){
+        if(!config.isConfigurationSection("players"))
+            config.createSection("players");
+        PendingConfig.save();
+        return new ArrayList<>(config.getConfigurationSection("players").getKeys(false));
+    }
+
+    public double getPlayerMoney(String playerName){
+        if(getPlayerNames().contains(playerName)){
+            return config.getLong(playerName);
+        }
+        return 0;
+    }
+}
